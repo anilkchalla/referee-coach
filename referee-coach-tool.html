@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Dial Board — Referee & Coach Self-Diagnosis for Teachers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ref: #1a3a5c;
+    --ref-mid: #2e6da4;
+    --ref-light: #dceef9;
+    --ref-pale: #f0f7fd;
+    --coach: #1a4a35;
+    --coach-mid: #2e8a5a;
+    --coach-light: #d4f0e3;
+    --coach-pale: #f0faf5;
+    --ink: #1a1a1a;
+    --ink-2: #444;
+    --ink-3: #888;
+    --ink-4: #bbb;
+    --surface: #fafaf8;
+    --surface-2: #f2f1ee;
+    --surface-3: #e8e7e3;
+    --border: #e0dfd9;
+    --amber: #b35a00;
+    --amber-light: #fff3e0;
+    --red: #a32020;
+    --red-light: #fdeaea;
+    --green: #1a5c35;
+    --green-light: #e0f5ea;
+    --radius: 12px;
+    --radius-sm: 6px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface);
+    color: var(--ink);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--ink);
+    color: #fff;
+    padding: 2rem 2.5rem 1.75rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .header-left h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -.01em;
+    margin-bottom: .35rem;
+  }
+  .header-left h1 em { font-style: italic; color: #a8c8e8; }
+  .header-sub {
+    font-size: 13px;
+    color: #aaa;
+    font-weight: 300;
+    letter-spacing: .01em;
+  }
+  .header-pills { display: flex; gap: .5rem; flex-wrap: wrap; align-items: center; }
+  .pill {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .pill-ref { background: rgba(46,109,164,.25); color: #a8c8e8; }
+  .pill-coach { background: rgba(46,138,90,.25); color: #88d4a8; }
+
+  /* ── NAV TABS ── */
+  .tabs {
+    background: var(--ink);
+    border-top: 1px solid #333;
+    display: flex;
+    gap: 0;
+    padding: 0 2.5rem;
+    overflow-x: auto;
+  }
+  .tab {
+    font-size: 13px;
+    font-weight: 400;
+    color: #777;
+    padding: .75rem 1.25rem;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color .15s, border-color .15s;
+    letter-spacing: .01em;
+  }
+  .tab:hover { color: #ccc; }
+  .tab.active { color: #fff; border-bottom-color: #fff; }
+
+  /* ── LAYOUT ── */
+  main { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ── SECTION LABEL ── */
+  .sec-label {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: .5rem;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+  }
+  .card-surface {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+  }
+
+  /* ── SCENARIO SECTION ── */
+  .scenario-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: .75rem;
+    flex-wrap: wrap;
+  }
+  .scenario-num {
+    font-size: 11px;
+    color: var(--ink-3);
+    font-weight: 500;
+    white-space: nowrap;
+    padding-top: .1rem;
+  }
+  .scenario-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    line-height: 1.45;
+    color: var(--ink);
+    font-style: italic;
+    flex: 1;
+  }
+  .scenario-nav { display: flex; gap: .5rem; margin-top: .75rem; }
+  .btn-outline {
+    font-size: 12px;
+    padding: 5px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--ink-2);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: background .12s, border-color .12s;
+  }
+  .btn-outline:hover { background: var(--surface-2); border-color: var(--ink-4); }
+
+  /* ── DIALS ── */
+  .dials-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
+  @media (max-width: 560px) { .dials-grid { grid-template-columns: 1fr; } }
+
+  .dial-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    position: relative;
+  }
+  .dial-card.ref-card { border-top: 3px solid var(--ref-mid); }
+  .dial-card.coach-card { border-top: 3px solid var(--coach-mid); }
+
+  .dial-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: .1rem; }
+  .dial-name { font-weight: 500; font-size: 15px; }
+  .ref-card .dial-name { color: var(--ref); }
+  .coach-card .dial-name { color: var(--coach); }
+  .dial-num { font-size: 2rem; font-weight: 300; font-family: 'DM Serif Display', serif; }
+  .ref-card .dial-num { color: var(--ref-mid); }
+  .coach-card .dial-num { color: var(--coach-mid); }
+  .dial-desc { font-size: 11px; color: var(--ink-3); margin-bottom: .9rem; }
+
+  .track-container { position: relative; margin-bottom: .3rem; }
+  .track {
+    height: 8px;
+    border-radius: 4px;
+    background: var(--surface-3);
+    position: relative;
+    overflow: visible;
+  }
+  .track-fill {
+    height: 8px;
+    border-radius: 4px;
+    position: absolute;
+    top: 0; left: 0;
+    transition: width .1s;
+    pointer-events: none;
+  }
+  .ref-card .track-fill { background: var(--ref-mid); }
+  .coach-card .track-fill { background: var(--coach-mid); }
+
+  .ideal-pin {
+    position: absolute;
+    top: -5px;
+    width: 3px;
+    height: 18px;
+    border-radius: 2px;
+    pointer-events: none;
+    transition: left .35s cubic-bezier(.4,0,.2,1), opacity .25s;
+    opacity: 0;
+    z-index: 3;
+  }
+  .ref-card .ideal-pin { background: var(--ref); }
+  .coach-card .ideal-pin { background: var(--coach); }
+  .ideal-pin.visible { opacity: 1; }
+
+  .ideal-tooltip {
+    position: absolute;
+    top: -28px;
+    font-size: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+    transform: translateX(-50%);
+    pointer-events: none;
+    transition: left .35s cubic-bezier(.4,0,.2,1), opacity .25s;
+    opacity: 0;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+  .ref-card .ideal-tooltip { background: var(--ref-light); color: var(--ref); }
+  .coach-card .ideal-tooltip { background: var(--coach-light); color: var(--coach); }
+  .ideal-tooltip.visible { opacity: 1; }
+
+  input[type=range] {
+    width: 100%;
+    margin: .4rem 0 .25rem;
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    cursor: pointer;
+    position: relative;
+    z-index: 4;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    margin-top: -6px;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,.18);
+    transition: transform .1s;
+  }
+  .ref-card input[type=range]::-webkit-slider-thumb { background: var(--ref-mid); }
+  .coach-card input[type=range]::-webkit-slider-thumb { background: var(--coach-mid); }
+  input[type=range]::-webkit-slider-runnable-track { height: 8px; border-radius: 4px; background: transparent; }
+  input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.15); }
+  .dial-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--ink-4); }
+
+  /* ── REVEAL + GAPS ── */
+  .reveal-row { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin: 1rem 0; }
+  .btn-reveal {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--ref-mid);
+    background: transparent;
+    color: var(--ref-mid);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: .02em;
+    transition: background .12s, color .12s;
+  }
+  .btn-reveal:hover, .btn-reveal.active { background: var(--ref); color: #fff; border-color: var(--ref); }
+
+  .gap-chips { display: flex; gap: .4rem; flex-wrap: wrap; }
+  .gap-chip {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .gap-good { background: var(--green-light); color: var(--green); }
+  .gap-mid { background: var(--amber-light); color: var(--amber); }
+  .gap-high { background: var(--red-light); color: var(--red); }
+
+  /* ── RATIONALE ── */
+  .rationale {
+    font-size: 13.5px;
+    color: var(--ink-2);
+    line-height: 1.7;
+    padding: .9rem 1.1rem;
+    border-radius: var(--radius-sm);
+    background: var(--surface-2);
+    border-left: 3px solid var(--border);
+    margin-bottom: 1.25rem;
+    transition: border-color .3s, background .3s;
+    font-style: italic;
+  }
+  .rationale.shown { border-left-color: var(--ref-mid); background: var(--ref-pale); font-style: normal; }
+
+  /* ── SIGNALS ── */
+  .signals-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: .75rem; margin-bottom: 1.5rem; }
+  .signal-item {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: .8rem 1rem;
+    cursor: pointer;
+    transition: border-color .12s, background .12s;
+  }
+  .signal-item:hover { border-color: var(--ink-4); }
+  .signal-item.sel-r { border-color: var(--ref-mid); background: var(--ref-pale); }
+  .signal-item.sel-c { border-color: var(--coach-mid); background: var(--coach-pale); }
+  .signal-item.sel-u { border-color: var(--amber); background: var(--amber-light); }
+  .signal-q { font-size: 13px; color: var(--ink-2); line-height: 1.5; margin-bottom: .4rem; }
+  .signal-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+  .tag-r { background: var(--ref-light); color: var(--ref); }
+  .tag-c { background: var(--coach-light); color: var(--coach); }
+  .tag-u { background: var(--amber-light); color: var(--amber); }
+
+  /* ── PROFILE ── */
+  .profile-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem; }
+  @media (max-width: 560px) { .profile-row { grid-template-columns: 1fr; } }
+
+  .stat-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+  }
+  .stat-label { font-size: 11px; color: var(--ink-3); text-transform: uppercase; letter-spacing: .07em; margin-bottom: .2rem; }
+  .stat-val { font-size: 2.2rem; font-family: 'DM Serif Display', serif; font-weight: 400; margin-bottom: .5rem; }
+  .ref-stat .stat-val { color: var(--ref-mid); }
+  .coach-stat .stat-val { color: var(--coach-mid); }
+
+  .bar-wrap { position: relative; height: 8px; border-radius: 4px; background: var(--surface-3); }
+  .bar-fill { position: absolute; top: 0; left: 0; height: 8px; border-radius: 4px; transition: width .5s cubic-bezier(.4,0,.2,1); }
+  .ref-bar { background: var(--ref-mid); }
+  .coach-bar { background: var(--coach-mid); }
+  .bar-ideal-mark {
+    position: absolute;
+    top: -4px;
+    width: 3px; height: 16px;
+    border-radius: 2px;
+    opacity: .65;
+    transition: left .5s cubic-bezier(.4,0,.2,1), opacity .3s;
+  }
+  .bar-ideal-mark.hidden { opacity: 0; }
+  .ref-ideal-mark { background: var(--ref); }
+  .coach-ideal-mark { background: var(--coach); }
+
+  .stat-footer { font-size: 11px; color: var(--ink-3); margin-top: .35rem; }
+
+  .insight-card {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 1.25rem;
+    font-size: 13.5px;
+    color: var(--ink-2);
+    line-height: 1.7;
+  }
+  .insight-icon {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--surface-3);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: .6rem;
+    font-size: 14px;
+  }
+
+  .progress-dots { display: flex; gap: 6px; align-items: center; }
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--surface-3);
+    transition: background .2s;
+  }
+  .dot.rated { background: var(--ink-3); }
+  .dot.current { background: var(--ink); }
+
+  /* ── ABOUT PANEL ── */
+  .about-section { margin-bottom: 2rem; }
+  .about-section h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    margin-bottom: .6rem;
+    color: var(--ink);
+  }
+  .about-section p { font-size: 14px; color: var(--ink-2); line-height: 1.75; margin-bottom: .75rem; }
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.25rem 0; }
+  @media (max-width: 480px) { .compare-grid { grid-template-columns: 1fr; } }
+  .compare-col { border-radius: var(--radius); padding: 1.1rem 1.25rem; }
+  .compare-col.ref-col { background: var(--ref-pale); border: 1px solid var(--ref-light); }
+  .compare-col.coach-col { background: var(--coach-pale); border: 1px solid var(--coach-light); }
+  .compare-col h3 { font-size: 14px; font-weight: 500; margin-bottom: .6rem; }
+  .ref-col h3 { color: var(--ref); }
+  .coach-col h3 { color: var(--coach); }
+  .compare-col ul { list-style: none; padding: 0; }
+  .compare-col ul li { font-size: 13px; color: var(--ink-2); padding: .25rem 0; border-bottom: 1px solid rgba(0,0,0,.06); display: flex; gap: .5rem; }
+  .compare-col ul li::before { content: '—'; color: var(--ink-4); flex-shrink: 0; }
+
+  /* ── ADD SCENARIO PANEL ── */
+  .form-group { margin-bottom: 1.1rem; }
+  .form-label { font-size: 12px; font-weight: 500; color: var(--ink-2); display: block; margin-bottom: .4rem; letter-spacing: .02em; }
+  .form-input, .form-textarea {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: .6rem .9rem;
+    outline: none;
+    transition: border-color .12s;
+    resize: vertical;
+  }
+  .form-input:focus, .form-textarea:focus { border-color: var(--ref-mid); }
+  .form-textarea { min-height: 80px; }
+  .range-row { display: flex; align-items: center; gap: .75rem; }
+  .range-row input { flex: 1; }
+  .range-num { font-size: 1.1rem; font-family: 'DM Serif Display', serif; min-width: 28px; text-align: right; }
+  .btn-primary {
+    font-size: 13px;
+    font-weight: 500;
+    padding: .65rem 1.5rem;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: var(--ink);
+    color: #fff;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: .02em;
+    transition: background .12s;
+  }
+  .btn-primary:hover { background: var(--ref); }
+
+  .custom-scenario-list { margin-top: 1.5rem; }
+  .custom-item {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: .8rem 1rem;
+    margin-bottom: .6rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: .75rem;
+  }
+  .custom-item-text { font-size: 13px; color: var(--ink-2); font-style: italic; flex: 1; }
+  .custom-item-meta { font-size: 11px; color: var(--ink-3); margin-top: .2rem; }
+  .btn-remove {
+    font-size: 11px;
+    color: var(--ink-4);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-remove:hover { color: var(--red); background: var(--red-light); }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 1.5rem;
+    font-size: 12px;
+    color: var(--ink-4);
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .panel.active { animation: fadeSlide .25s ease; }
+
+  .progress-bar {
+    height: 3px;
+    background: var(--ref-mid);
+    transition: width .3s;
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+  }
+
+  .legend-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: .75rem;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-3); }
+  .legend-swatch { width: 14px; height: 5px; border-radius: 3px; }
+  .legend-pin { width: 3px; height: 14px; border-radius: 2px; }
+
+  .empty-state {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--ink-3);
+    font-size: 14px;
+  }
+  .empty-state .big { font-size: 2rem; font-family: 'DM Serif Display', serif; display: block; margin-bottom: .4rem; color: var(--ink-4); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>The Dial Board<em> ·</em> Referee &amp; Coach</h1>
+    <div class="header-sub">A self-diagnosis tool for teachers — calibrate your classroom register</div>
+  </div>
+  <div class="header-pills">
+    <span class="pill pill-ref">Referee — clinical</span>
+    <span class="pill pill-coach">Coach — personal</span>
+  </div>
+</header>
+
+<nav class="tabs">
+  <div class="tab active" onclick="switchTab('diagnose', this)">Self-Diagnosis</div>
+  <div class="tab" onclick="switchTab('profile', this)">My Profile</div>
+  <div class="tab" onclick="switchTab('add', this)">Add Scenario</div>
+  <div class="tab" onclick="switchTab('about', this)">About</div>
+</nav>
+
+<!-- ═══════════════ DIAGNOSE PANEL ═══════════════ -->
+<main>
+<div id="panel-diagnose" class="panel active">
+
+  <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+
+  <div class="sec-label">Student scenario</div>
+  <div class="card-surface" style="margin-bottom:1.5rem">
+    <div class="scenario-header">
+      <div class="scenario-text" id="stext"></div>
+      <div class="scenario-num" id="snum"></div>
+    </div>
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:.75rem">
+      <div class="scenario-nav">
+        <button class="btn-outline" onclick="prevS()">&#8592; Prev</button>
+        <button class="btn-outline" onclick="nextS()">Next &#8594;</button>
+      </div>
+      <div class="progress-dots" id="dots"></div>
+    </div>
+  </div>
+
+  <div class="sec-label">What signal is this student sending?</div>
+  <div class="signals-grid" id="sigrid" style="margin-bottom:1.5rem"></div>
+
+  <div class="sec-label">Set your dials</div>
+  <div class="legend-row">
+    <div class="legend-item"><div class="legend-swatch" style="background:var(--ref-mid)"></div>Your setting</div>
+    <div class="legend-item"><div class="legend-pin" style="background:var(--ref)"></div>Ideal (shown after reveal)</div>
+  </div>
+  <div class="dials-grid">
+    <div class="dial-card ref-card">
+      <div class="dial-header">
+        <span class="dial-name">Referee</span>
+        <span class="dial-num" id="rval">5</span>
+      </div>
+      <div class="dial-desc">Clinical · standards · judgment · cut &amp; dry</div>
+      <div class="track-container">
+        <div class="track" id="rtrack">
+          <div class="track-fill" id="rfill" style="width:50%"></div>
+          <div class="ideal-pin" id="rpin" style="left:50%"></div>
+          <div class="ideal-tooltip" id="rtip" style="left:50%"></div>
+        </div>
+      </div>
+      <input type="range" min="0" max="10" step="1" value="5" id="rslider" oninput="updateDials()">
+      <div class="dial-labels"><span>Low</span><span>High</span></div>
+    </div>
+    <div class="dial-card coach-card">
+      <div class="dial-header">
+        <span class="dial-name">Coach</span>
+        <span class="dial-num" id="cval">5</span>
+      </div>
+      <div class="dial-desc">Personal · method · development · soft</div>
+      <div class="track-container">
+        <div class="track" id="ctrack">
+          <div class="track-fill" id="cfill" style="width:50%"></div>
+          <div class="ideal-pin" id="cpin" style="left:50%"></div>
+          <div class="ideal-tooltip" id="ctip" style="left:50%"></div>
+        </div>
+      </div>
+      <input type="range" min="0" max="10" step="1" value="5" id="cslider" oninput="updateDials()">
+      <div class="dial-labels"><span>Low</span><span>High</span></div>
+    </div>
+  </div>
+
+  <div class="reveal-row">
+    <button class="btn-reveal" id="revbtn" onclick="toggleReveal()">Show ideal dials</button>
+    <div class="gap-chips" id="gapchips"></div>
+  </div>
+
+  <div class="rationale" id="rationale">
+    Set your dials above, then reveal the ideal settings and the reasoning behind them.
+  </div>
+
+</div>
+
+<!-- ═══════════════ PROFILE PANEL ═══════════════ -->
+<div id="panel-profile" class="panel">
+
+  <div class="sec-label" style="margin-bottom:1rem">Aggregate profile — all rated scenarios</div>
+  <div class="profile-row">
+    <div class="stat-card ref-stat">
+      <div class="stat-label">Referee — your average</div>
+      <div class="stat-val" id="p-rval">—</div>
+      <div class="bar-wrap">
+        <div class="bar-fill ref-bar" id="p-rbar" style="width:0%"></div>
+        <div class="bar-ideal-mark ref-ideal-mark hidden" id="p-rideal"></div>
+      </div>
+      <div class="stat-footer" id="p-rfooter">Rate scenarios to build your profile</div>
+    </div>
+    <div class="stat-card coach-stat">
+      <div class="stat-label">Coach — your average</div>
+      <div class="stat-val" id="p-cval">—</div>
+      <div class="bar-wrap">
+        <div class="bar-fill coach-bar" id="p-cbar" style="width:0%"></div>
+        <div class="bar-ideal-mark coach-ideal-mark hidden" id="p-cideal"></div>
+      </div>
+      <div class="stat-footer" id="p-cfooter">Ideal marker appears when you reveal dials</div>
+    </div>
+  </div>
+
+  <div class="insight-card" id="p-insight">
+    <div class="insight-icon">&#9670;</div>
+    Work through the scenarios in the Self-Diagnosis tab to build your profile here.
+  </div>
+
+  <div class="sec-label" style="margin-bottom:.75rem">Scenario breakdown</div>
+  <div id="breakdown-list"></div>
+
+</div>
+
+<!-- ═══════════════ ADD SCENARIO PANEL ═══════════════ -->
+<div id="panel-add" class="panel">
+
+  <div class="card" style="margin-bottom:1.5rem">
+    <div class="sec-label" style="margin-bottom:1rem">Create a custom scenario</div>
+
+    <div class="form-group">
+      <label class="form-label">Student scenario (what the student says or does)</label>
+      <textarea class="form-textarea" id="f-scenario" placeholder='e.g. "I rewrote my essay three times but I still don\'t know if it\'s good enough."'></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Ideal referee dial (0 = low, 10 = high)</label>
+      <div class="range-row">
+        <input type="range" min="0" max="10" step="1" value="5" id="f-ref" oninput="document.getElementById('f-ref-num').textContent=this.value" style="accent-color:var(--ref-mid)">
+        <span class="range-num" id="f-ref-num" style="color:var(--ref-mid)">5</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Ideal coach dial (0 = low, 10 = high)</label>
+      <div class="range-row">
+        <input type="range" min="0" max="10" step="1" value="5" id="f-coach" oninput="document.getElementById('f-coach-num').textContent=this.value" style="accent-color:var(--coach-mid)">
+        <span class="range-num" id="f-coach-num" style="color:var(--coach-mid)">5</span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Rationale (why these ideal settings?)</label>
+      <textarea class="form-textarea" id="f-rationale" placeholder="Explain the reasoning behind the suggested dial settings..."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Signal options (optional — up to 3, one per line)</label>
+      <textarea class="form-textarea" id="f-signals" placeholder='Line 1: "What will it take to get an A?" [referee]&#10;Line 2: "Can you help me figure out my approach?" [coach]&#10;Line 3: Avoids eye contact, seems defeated [read first]' style="min-height:90px"></textarea>
+      <div style="font-size:11px;color:var(--ink-3);margin-top:.3rem">Append [referee], [coach], or [read first] to tag each signal</div>
+    </div>
+
+    <button class="btn-primary" onclick="addCustomScenario()">Add to scenario deck</button>
+    <span id="f-success" style="font-size:12px;color:var(--green);margin-left:.75rem;opacity:0;transition:opacity .3s"></span>
+  </div>
+
+  <div class="custom-scenario-list">
+    <div class="sec-label" style="margin-bottom:.75rem">Your custom scenarios</div>
+    <div id="custom-list"></div>
+  </div>
+
+</div>
+
+<!-- ═══════════════ ABOUT PANEL ═══════════════ -->
+<div id="panel-about" class="panel">
+
+  <div class="about-section">
+    <h2>What is the Dial Board?</h2>
+    <p>Every teacher plays two roles simultaneously — <strong>referee</strong> and <strong>coach</strong>. The referee is clinical and cut-and-dry: they hold the standards, apply the rules, and deliver verdicts. The coach is personal and soft: they develop the student, build method, and meet the person where they are.</p>
+    <p>Different students, in different moments, need different proportions of each. This tool helps you diagnose your natural defaults — and build the perceptual flexibility to dial each function up or down deliberately.</p>
+  </div>
+
+  <div class="compare-grid">
+    <div class="compare-col ref-col">
+      <h3>Referee</h3>
+      <ul>
+        <li>Holds standards impersonally</li>
+        <li>Applies same criteria to all</li>
+        <li>Delivers clear verdicts</li>
+        <li>Context-blind by design</li>
+        <li>Outcome-oriented</li>
+      </ul>
+    </div>
+    <div class="compare-col coach-col">
+      <h3>Coach</h3>
+      <ul>
+        <li>Calibrated to this student</li>
+        <li>Asks: where are you now?</li>
+        <li>Builds method and capability</li>
+        <li>Context-rich by necessity</li>
+        <li>Process-oriented</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="about-section">
+    <h2>How to use this tool</h2>
+    <p><strong>Self-Diagnosis tab:</strong> Work through the student scenarios. For each one, tag the signal the student is sending, then set your dials to reflect how you would respond. Before you reveal the ideal, commit to your settings — then compare. The gap is where growth lives.</p>
+    <p><strong>Profile tab:</strong> After rating several scenarios, your aggregate profile builds automatically. The ideal markers (when shown) reveal your calibration tendency — whether you over-referee, under-coach, or default to one register regardless of student need.</p>
+    <p><strong>Add Scenario tab:</strong> Bring your own real student moments. Setting the ideal dials yourself is its own learning exercise.</p>
+  </div>
+
+  <div class="about-section">
+    <h2>The key insight</h2>
+    <p>The referee doesn't need to know you. The coach cannot function without knowing you. The same teacher must inhabit both roles — but the relationship each requires is almost opposite. Recognising which mode a student needs, and switching registers fluidly, is the advanced skill this tool trains.</p>
+  </div>
+
+</div>
+</main>
+
+<footer>
+  The Dial Board — Referee &amp; Coach · A diagnostic tool for reflective teaching practice
+</footer>
+
+<script>
+const BUILT_IN = [
+  {
+    text: '"I studied really hard but I keep failing your tests. I don\'t know what you want from me."',
+    ideal: {r:8, c:5},
+    rationale: 'This student has effort but lacks clarity on standards. Lead with the referee: make criteria explicit, show exemplars, decode the rubric. Once they can see the target, coach them on how to hit it. High referee here is an act of care, not harshness.',
+    signals: [
+      {q:'"What exactly does a good answer look like?"', tag:'r'},
+      {q:'"I don\'t know where to begin when I study."', tag:'c'},
+      {q:'"Maybe I\'m just not cut out for this."', tag:'u'}
+    ]
+  },
+  {
+    text: '"I know the material — I just freeze during exams. I\'ve always been like this."',
+    ideal: {r:3, c:9},
+    rationale: 'The referee is not the problem here — they already know the standard. What they need is method: strategies, rehearsal, reframing. Heavy coaching, light on judgment. Adding more criteria language will feel like pressure, not help.',
+    signals: [
+      {q:'"Will exam performance affect my final grade heavily?"', tag:'r'},
+      {q:'"Can you help me with strategies for test anxiety?"', tag:'c'},
+      {q:'"Is there any way to do an alternative assessment?"', tag:'u'}
+    ]
+  },
+  {
+    text: 'A student submits excellent work consistently but never participates in class. When asked why, they shrug.',
+    ideal: {r:2, c:7},
+    rationale: 'Excellent work means the referee function is already working for them. The silence is a coach signal — something about participation feels unsafe or unclear to them personally. Go relational before going clinical.',
+    signals: [
+      {q:'"Does participation affect my grade?"', tag:'r'},
+      {q:'"I have ideas but I don\'t know how to jump in."', tag:'c'},
+      {q:'They shrug and look away', tag:'u'}
+    ]
+  },
+  {
+    text: '"I finished the assignment but I\'m not sure if I did it right. I just want to know if I passed."',
+    ideal: {r:9, c:3},
+    rationale: 'A direct request for a verdict. Don\'t over-coach this moment — give them the clear answer they\'re asking for. Deflecting into "how did it feel?" when they want "did I pass?" erodes trust. Honour the referee request first; coaching can follow if they want it.',
+    signals: [
+      {q:'"What\'s the minimum to pass this assignment?"', tag:'r'},
+      {q:'"Can you tell me if my argument makes sense?"', tag:'c'},
+      {q:'"I just don\'t want to be surprised."', tag:'u'}
+    ]
+  },
+  {
+    text: 'A previously strong student is now submitting late, below-standard work with no explanation.',
+    ideal: {r:3, c:9},
+    rationale: 'A performance drop in a capable student is almost never about standards — they already know the standard. Something has changed. Lead with care, not criteria. The referee\'s job here is to stay in the background while the coach figures out what happened.',
+    signals: [
+      {q:'"I know — I\'ll just take the late penalty."', tag:'r'},
+      {q:'"I\'ve lost track of how to manage everything."', tag:'c'},
+      {q:'They avoid eye contact and seem withdrawn', tag:'u'}
+    ]
+  },
+  {
+    text: '"Everyone else seems to understand this. I feel like I\'m the only one who\'s lost."',
+    ideal: {r:5, c:8},
+    rationale: 'Two needs at once: some reassurance about where they stand relative to expectations (referee), and a lot of help figuring out the method (coach). Acknowledge the standard gently, then shift most energy into the how. The comparison to others is a social distress signal — don\'t feed it with more ranking.',
+    signals: [
+      {q:'"Are most people passing the class?"', tag:'r'},
+      {q:'"Can you help me figure out what I\'m missing?"', tag:'c'},
+      {q:'"Maybe this subject just isn\'t for me."', tag:'u'}
+    ]
+  },
+  {
+    text: 'A confident student challenges your grading: "I think I deserved a higher mark on this."',
+    ideal: {r:9, c:4},
+    rationale: 'This is a referee moment. The student is questioning the standard and its application — that requires a clear, reasoned account of the criteria. Coaching here can feel like you\'re avoiding the judgment. Be the referee first; leave space for coaching if the conversation evolves.',
+    signals: [
+      {q:'"Can you show me exactly where I lost marks?"', tag:'r'},
+      {q:'"What would I need to do differently next time?"', tag:'c'},
+      {q:'"I just feel like my effort wasn\'t recognised."', tag:'u'}
+    ]
+  },
+  {
+    text: 'A first-generation college student comes to office hours but hesitates to ask questions, then leaves quickly.',
+    ideal: {r:4, c:9},
+    rationale: 'First-gen students often lack the hidden curriculum — the unspoken rules of academic culture. That\'s a coaching deficit, not a performance one. Heavy coach investment: make the implicit explicit, model the behaviours, lower the social cost of asking. Light referee presence so as not to reinforce any sense of being judged.',
+    signals: [
+      {q:'"Is it okay to come here just for basic questions?"', tag:'u'},
+      {q:'"I\'m not sure what I\'m supposed to be doing here."', tag:'c'},
+      {q:'"Will you think less of me if I don\'t know this?"', tag:'u'}
+    ]
+  }
+];
+
+let customScenarios = [];
+let allScenarios = [...BUILT_IN];
+let cur = 0;
+let revealed = false;
+const dialHistory = {};
+const signalHistory = {};
+
+function getAllScenarios() { return [...BUILT_IN, ...customScenarios]; }
+
+function pct(v) { return (v * 10) + '%'; }
+
+function renderDots() {
+  const all = getAllScenarios();
+  document.getElementById('dots').innerHTML = all.map((_, i) => {
+    let cls = 'dot';
+    if (dialHistory[i] !== undefined) cls += ' rated';
+    if (i === cur) cls += ' current';
+    return `<div class="${cls}" onclick="jumpTo(${i})" title="Scenario ${i+1}" style="cursor:pointer"></div>`;
+  }).join('');
+}
+
+function jumpTo(i) { cur = i; revealed = false; renderScenario(); }
+
+function renderScenario() {
+  const all = getAllScenarios();
+  const s = all[cur];
+  if (!s) return;
+  document.getElementById('stext').textContent = s.text;
+  document.getElementById('snum').textContent = (cur + 1) + ' / ' + all.length;
+  const rv = dialHistory[cur]?.r ?? 5;
+  const cv = dialHistory[cur]?.c ?? 5;
+  document.getElementById('rslider').value = rv;
+  document.getElementById('cslider').value = cv;
+  revealed = false;
+  const rb = document.getElementById('revbtn');
+  rb.textContent = 'Show ideal dials';
+  rb.classList.remove('active');
+  ['rpin','cpin','rtip','ctip'].forEach(id => {
+    document.getElementById(id).classList.remove('visible');
+  });
+  document.getElementById('rationale').textContent = 'Set your dials above, then reveal the ideal settings and the reasoning behind them.';
+  document.getElementById('rationale').classList.remove('shown');
+  document.getElementById('gapchips').innerHTML = '';
+  updateFills(rv, cv);
+  renderSignals();
+  renderDots();
+  const progress = Object.keys(dialHistory).length / all.length * 100;
+  document.getElementById('progress-bar').style.width = Math.round(progress) + '%';
+}
+
+function renderSignals() {
+  const all = getAllScenarios();
+  const s = all[cur];
+  const sel = signalHistory[cur];
+  const tagMap = {
+    r: {cls: 'sel-r', label: 'Referee signal', tc: 'tag-r'},
+    c: {cls: 'sel-c', label: 'Coach signal', tc: 'tag-c'},
+    u: {cls: 'sel-u', label: 'Read first', tc: 'tag-u'}
+  };
+  if (!s.signals || s.signals.length === 0) {
+    document.getElementById('sigrid').innerHTML = '<div style="font-size:13px;color:var(--ink-3);font-style:italic;margin-bottom:.5rem">No signals defined for this scenario.</div>';
+    return;
+  }
+  document.getElementById('sigrid').innerHTML = s.signals.map((sig, i) => {
+    const t = tagMap[sig.tag] || tagMap.u;
+    let cls = 'signal-item';
+    if (sel === i) cls += ' ' + t.cls;
+    return `<div class="${cls}" onclick="selSig(${i})"><div class="signal-q">${sig.q}</div><span class="signal-tag ${t.tc}">${t.label}</span></div>`;
+  }).join('');
+}
+
+function selSig(i) { signalHistory[cur] = i; renderSignals(); }
+
+function updateFills(rv, cv) {
+  document.getElementById('rval').textContent = rv;
+  document.getElementById('cval').textContent = cv;
+  document.getElementById('rfill').style.width = pct(rv);
+  document.getElementById('cfill').style.width = pct(cv);
+}
+
+function updateDials() {
+  const rv = parseInt(document.getElementById('rslider').value);
+  const cv = parseInt(document.getElementById('cslider').value);
+  dialHistory[cur] = {r: rv, c: cv};
+  updateFills(rv, cv);
+  if (revealed) showGaps(rv, cv);
+  updateProfile();
+  renderDots();
+}
+
+function toggleReveal() {
+  revealed = !revealed;
+  const all = getAllScenarios();
+  const s = all[cur];
+  const btn = document.getElementById('revbtn');
+  if (revealed) {
+    btn.textContent = 'Hide ideal dials';
+    btn.classList.add('active');
+    const rp = pct(s.ideal.r);
+    const cp = pct(s.ideal.c);
+    const rpin = document.getElementById('rpin');
+    const cpin = document.getElementById('cpin');
+    const rtip = document.getElementById('rtip');
+    const ctip = document.getElementById('ctip');
+    rpin.style.left = rp; rpin.classList.add('visible');
+    cpin.style.left = cp; cpin.classList.add('visible');
+    rtip.style.left = rp; rtip.textContent = 'ideal ' + s.ideal.r; rtip.classList.add('visible');
+    ctip.style.left = cp; ctip.textContent = 'ideal ' + s.ideal.c; ctip.classList.add('visible');
+    const rat = document.getElementById('rationale');
+    rat.textContent = s.rationale || 'No rationale provided.';
+    rat.classList.add('shown');
+    const rv = parseInt(document.getElementById('rslider').value);
+    const cv = parseInt(document.getElementById('cslider').value);
+    showGaps(rv, cv);
+    updateProfile();
+  } else {
+    btn.textContent = 'Show ideal dials';
+    btn.classList.remove('active');
+    ['rpin','cpin','rtip','ctip'].forEach(id => document.getElementById(id).classList.remove('visible'));
+    const rat = document.getElementById('rationale');
+    rat.textContent = 'Set your dials above, then reveal the ideal settings and the reasoning behind them.';
+    rat.classList.remove('shown');
+    document.getElementById('gapchips').innerHTML = '';
+  }
+}
+
+function gapInfo(diff, name) {
+  const a = Math.abs(diff);
+  const dir = diff > 0 ? 'too high' : 'too low';
+  if (a <= 1) return {cls: 'gap-good', txt: name + ': calibrated'};
+  if (a <= 3) return {cls: 'gap-mid', txt: name + ': slightly ' + dir};
+  return {cls: 'gap-high', txt: name + ': ' + dir};
+}
+
+function showGaps(rv, cv) {
+  const all = getAllScenarios();
+  const s = all[cur];
+  const rg = gapInfo(rv - s.ideal.r, 'Referee');
+  const cg = gapInfo(cv - s.ideal.c, 'Coach');
+  document.getElementById('gapchips').innerHTML =
+    `<span class="gap-chip ${rg.cls}">${rg.txt}</span><span class="gap-chip ${cg.cls}">${cg.txt}</span>`;
+}
+
+function updateProfile() {
+  const keys = Object.keys(dialHistory);
+  if (keys.length === 0) return;
+  let rs = 0, cs = 0;
+  keys.forEach(k => { rs += dialHistory[k].r; cs += dialHistory[k].c; });
+  const ra = Math.round(rs / keys.length);
+  const ca = Math.round(cs / keys.length);
+  document.getElementById('p-rval').textContent = ra + '/10';
+  document.getElementById('p-cval').textContent = ca + '/10';
+  document.getElementById('p-rbar').style.width = pct(ra);
+  document.getElementById('p-cbar').style.width = pct(ca);
+  document.getElementById('p-rfooter').textContent = keys.length + ' scenario' + (keys.length > 1 ? 's' : '') + ' rated';
+  document.getElementById('p-cfooter').textContent = 'Ideal markers shown when revealed';
+
+  const all = getAllScenarios();
+  let irs = 0, ics = 0, ic = 0;
+  keys.forEach(k => {
+    if (all[k]) { irs += all[k].ideal.r; ics += all[k].ideal.c; ic++; }
+  });
+  if (ic > 0) {
+    const ira = Math.round(irs / ic);
+    const ica = Math.round(ics / ic);
+    const ri = document.getElementById('p-rideal');
+    const ci = document.getElementById('p-cideal');
+    ri.style.left = pct(ira); ri.classList.remove('hidden');
+    ci.style.left = pct(ica); ci.classList.remove('hidden');
+  }
+
+  const diff = (rs - cs) / keys.length;
+  let ins = '';
+  if (keys.length < 3) ins = `You've rated ${keys.length} scenario${keys.length > 1 ? 's' : ''}. Rate at least 3 for a meaningful profile. `;
+  if (Math.abs(diff) < 1) ins += 'You tend to balance both modes. The challenge is recognising which to lean into deliberately for each student.';
+  else if (diff > 3) ins += 'You lean strongly toward the referee. Students who need developmental support may feel judged before they feel helped. Practise leading with a question before a verdict.';
+  else if (diff > 1) ins += 'Slight referee lean. Watch for moments where a student needs method or encouragement rather than a standard to measure against.';
+  else if (diff < -3) ins += 'You lean strongly toward the coach. Some students need a clean, clear standard. Too much warmth without judgment can leave them unmoored about where they actually stand.';
+  else ins += 'Slight coach lean. Some students need the clarity of an honest criterion more than more encouragement.';
+
+  document.getElementById('p-insight').innerHTML = '<div class="insight-icon">&#9670;</div>' + ins;
+  renderBreakdown();
+}
+
+function renderBreakdown() {
+  const all = getAllScenarios();
+  const keys = Object.keys(dialHistory);
+  if (keys.length === 0) {
+    document.getElementById('breakdown-list').innerHTML = '<div class="empty-state"><span class="big">—</span>Rate scenarios in the Self-Diagnosis tab to see a breakdown here.</div>';
+    return;
+  }
+  document.getElementById('breakdown-list').innerHTML = keys.map(k => {
+    const s = all[k];
+    if (!s) return '';
+    const d = dialHistory[k];
+    const rd = d.r - s.ideal.r;
+    const cd = d.c - s.ideal.c;
+    const rg = gapInfo(rd, 'Ref');
+    const cg = gapInfo(cd, 'Coach');
+    return `<div class="card" style="margin-bottom:.75rem">
+      <div style="font-size:13px;color:var(--ink-2);font-style:italic;margin-bottom:.6rem;line-height:1.5">${s.text.length > 100 ? s.text.slice(0,100)+'…' : s.text}</div>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center">
+        <span style="font-size:12px;color:var(--ref-mid);font-weight:500">Ref: ${d.r}/10</span>
+        <span style="font-size:12px;color:var(--ink-4)">·</span>
+        <span style="font-size:12px;color:var(--coach-mid);font-weight:500">Coach: ${d.c}/10</span>
+        <span style="font-size:12px;color:var(--ink-4)">·</span>
+        <span class="gap-chip ${rg.cls}" style="font-size:10px">${rg.txt}</span>
+        <span class="gap-chip ${cg.cls}" style="font-size:10px">${cg.txt}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function parseSignalTag(line) {
+  if (line.toLowerCase().includes('[referee]')) return {q: line.replace(/\[referee\]/i,'').trim(), tag:'r'};
+  if (line.toLowerCase().includes('[coach]')) return {q: line.replace(/\[coach\]/i,'').trim(), tag:'c'};
+  return {q: line.replace(/\[read first\]/i,'').trim(), tag:'u'};
+}
+
+function addCustomScenario() {
+  const text = document.getElementById('f-scenario').value.trim();
+  const rationale = document.getElementById('f-rationale').value.trim();
+  const r = parseInt(document.getElementById('f-ref').value);
+  const c = parseInt(document.getElementById('f-coach').value);
+  if (!text) { document.getElementById('f-scenario').focus(); return; }
+  const rawSignals = document.getElementById('f-signals').value.trim();
+  const signals = rawSignals ? rawSignals.split('\n').filter(l=>l.trim()).map(parseSignalTag) : [];
+  customScenarios.push({text, ideal:{r,c}, rationale: rationale || 'No rationale provided.', signals});
+  allScenarios = getAllScenarios();
+  renderCustomList();
+  document.getElementById('f-scenario').value='';
+  document.getElementById('f-rationale').value='';
+  document.getElementById('f-signals').value='';
+  document.getElementById('f-ref').value=5; document.getElementById('f-ref-num').textContent=5;
+  document.getElementById('f-coach').value=5; document.getElementById('f-coach-num').textContent=5;
+  const succ = document.getElementById('f-success');
+  succ.textContent = 'Scenario added to deck';
+  succ.style.opacity='1';
+  setTimeout(()=>succ.style.opacity='0', 2500);
+  renderDots();
+}
+
+function removeCustom(i) {
+  customScenarios.splice(i, 1);
+  allScenarios = getAllScenarios();
+  if (cur >= allScenarios.length) cur = allScenarios.length - 1;
+  renderCustomList();
+  renderDots();
+  renderScenario();
+}
+
+function renderCustomList() {
+  const el = document.getElementById('custom-list');
+  if (customScenarios.length === 0) {
+    el.innerHTML = '<div class="empty-state"><span class="big">+</span>No custom scenarios yet. Add one above.</div>';
+    return;
+  }
+  el.innerHTML = customScenarios.map((s, i) => `
+    <div class="custom-item">
+      <div>
+        <div class="custom-item-text">${s.text}</div>
+        <div class="custom-item-meta">Ref ideal: ${s.ideal.r} · Coach ideal: ${s.ideal.c} · ${s.signals.length} signal${s.signals.length !== 1 ? 's':''}</div>
+      </div>
+      <button class="btn-remove" onclick="removeCustom(${i})">Remove</button>
+    </div>`).join('');
+}
+
+function switchTab(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  el.classList.add('active');
+  if (id === 'profile') updateProfile();
+}
+
+function prevS() {
+  if (cur > 0) { cur--; revealed = false; renderScenario(); }
+}
+function nextS() {
+  const all = getAllScenarios();
+  if (cur < all.length - 1) { cur++; revealed = false; renderScenario(); }
+}
+
+renderScenario();
+renderCustomList();
+</script>
+</body>
+</html>
