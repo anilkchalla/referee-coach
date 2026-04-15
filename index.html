@@ -489,6 +489,47 @@
   }
   .btn-remove:hover { color: var(--red); background: var(--red-light); }
 
+  /* ── FEEDBACK PANEL ── */
+  .fb-intro { font-size: 14px; color: var(--ink-2); line-height: 1.75; margin-bottom: 1.5rem; font-style: italic; }
+  .fb-group { margin-bottom: 1.25rem; }
+  .fb-label { font-size: 12px; font-weight: 500; color: var(--ink-2); display: block; margin-bottom: .4rem; letter-spacing: .02em; }
+  .fb-sublabel { font-size: 11px; color: var(--ink-3); margin-bottom: .5rem; display: block; }
+  .fb-input, .fb-textarea, .fb-select {
+    width: 100%; font-family: 'DM Sans', sans-serif; font-size: 14px;
+    color: var(--ink); background: #fff; border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: .6rem .9rem; outline: none;
+    transition: border-color .12s; resize: vertical;
+  }
+  .fb-textarea { min-height: 90px; }
+  .fb-input:focus, .fb-textarea:focus, .fb-select:focus { border-color: var(--ref-mid); }
+  .fb-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right .8rem center; padding-right: 2rem; }
+  .star-row { display: flex; gap: .4rem; margin-bottom: .25rem; }
+  .star { font-size: 1.6rem; cursor: pointer; color: var(--ink-4); transition: color .12s; line-height: 1; user-select: none; }
+  .star.lit { color: #d4a017; }
+  .fb-privacy { font-size: 11px; color: var(--ink-3); line-height: 1.6; padding: .75rem 1rem; background: var(--surface-2); border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 1.25rem; }
+  .fb-send-btn {
+    display: inline-flex; align-items: center; gap: .4rem;
+    font-size: 13px; font-weight: 500; padding: .65rem 1.5rem;
+    border-radius: var(--radius-sm); border: none;
+    background: var(--ink); color: #fff; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; letter-spacing: .02em; transition: background .12s;
+  }
+  .fb-send-btn:hover { background: var(--ref); }
+  .fb-send-btn:disabled { opacity: .5; cursor: default; background: var(--ink); }
+  .fb-success {
+    display: none; background: var(--green-light); border: 1px solid var(--border);
+    border-left: 3px solid var(--green); border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem; font-size: 14px; color: var(--green); line-height: 1.7; margin-top: 1rem;
+  }
+  .fb-error {
+    display: none; background: var(--red-light); border: 1px solid var(--border);
+    border-left: 3px solid var(--red); border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem; font-size: 14px; color: var(--red); line-height: 1.7; margin-top: 1rem;
+  }
+  .fb-char { font-size: 11px; color: var(--ink-4); text-align: right; margin-top: .2rem; }
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
   /* ── FOOTER ── */
   footer {
     text-align: center;
@@ -551,6 +592,7 @@
   <div class="tab" onclick="switchTab('profile', this)">My Profile</div>
   <div class="tab" onclick="switchTab('add', this)">Add Scenario</div>
   <div class="tab" onclick="switchTab('about', this)">About</div>
+  <div class="tab" onclick="switchTab('feedback', this)">Feedback</div>
 </nav>
 
 <!-- ═══════════════ DIAGNOSE PANEL ═══════════════ -->
@@ -757,6 +799,93 @@
   </div>
 
 </div>
+<!-- ═══════════════ FEEDBACK PANEL ═══════════════ -->
+<div id="panel-feedback" class="panel">
+
+  <p class="fb-intro">Your experience with this tool matters. The questions below take about three minutes. Responses go directly to the tool&#8217;s author and will be used to improve future versions for classroom practice.</p>
+
+  <div class="card" style="margin-bottom:1.5rem">
+
+    <div class="fb-group">
+      <label class="fb-label">How did you find this tool overall?</label>
+      <div class="star-row" id="star-row" role="group" aria-label="Overall rating">
+        <span class="star" data-v="1" onclick="setStar(1)" title="1 — Not useful">&#9733;</span>
+        <span class="star" data-v="2" onclick="setStar(2)" title="2 — Slightly useful">&#9733;</span>
+        <span class="star" data-v="3" onclick="setStar(3)" title="3 — Moderately useful">&#9733;</span>
+        <span class="star" data-v="4" onclick="setStar(4)" title="4 — Very useful">&#9733;</span>
+        <span class="star" data-v="5" onclick="setStar(5)" title="5 — Excellent">&#9733;</span>
+      </div>
+      <div id="star-label" style="font-size:12px;color:var(--ink-3);min-height:18px;margin-top:.2rem"></div>
+    </div>
+
+    <div class="fb-group">
+      <label class="fb-label" for="fb-role">How useful was this tool in informing your optimal referee / coach role?</label>
+      <select class="fb-select" id="fb-role">
+        <option value="">— Select one —</option>
+        <option value="very">Very useful — it clarified something I hadn&#8217;t named before</option>
+        <option value="somewhat">Somewhat useful — it confirmed things I already sensed</option>
+        <option value="neutral">Neutral — interesting but not immediately actionable</option>
+        <option value="limited">Limited — the scenarios didn&#8217;t match my context well</option>
+        <option value="not">Not useful — the framework doesn&#8217;t fit how I teach</option>
+      </select>
+    </div>
+
+    <div class="fb-group">
+      <label class="fb-label" for="fb-moment">Was there a specific scenario or moment in the tool that was particularly useful or revealing?</label>
+      <textarea class="fb-textarea" id="fb-moment" maxlength="500" placeholder="Describe the scenario or insight, if any..." oninput="charCount('fb-moment','fb-moment-count',500)"></textarea>
+      <div class="fb-char" id="fb-moment-count">0 / 500</div>
+    </div>
+
+    <div class="fb-group">
+      <label class="fb-label" for="fb-changes">What changes would make this tool more useful and relevant to your classroom practice?</label>
+      <span class="fb-sublabel">Think about missing scenarios, the dial logic, signal descriptions, the profile section, or anything else.</span>
+      <textarea class="fb-textarea" id="fb-changes" maxlength="800" placeholder="Your suggestions here..." oninput="charCount('fb-changes','fb-changes-count',800)" style="min-height:110px"></textarea>
+      <div class="fb-char" id="fb-changes-count">0 / 800</div>
+    </div>
+
+    <div class="fb-group">
+      <label class="fb-label" for="fb-context">Your teaching context <span style="font-weight:400;color:var(--ink-3)">(optional)</span></label>
+      <select class="fb-select" id="fb-context">
+        <option value="">— Select if you&#8217;d like to share —</option>
+        <option value="primary">Primary / elementary school</option>
+        <option value="secondary">Secondary / high school</option>
+        <option value="undergrad">Undergraduate / college</option>
+        <option value="postgrad">Postgraduate / graduate</option>
+        <option value="professional">Professional / continuing education</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+
+    <div class="fb-group">
+      <label class="fb-label" for="fb-name">Your name <span style="font-weight:400;color:var(--ink-3)">(optional)</span></label>
+      <input type="text" class="fb-input" id="fb-name" placeholder="First name or initials" maxlength="80" autocomplete="off">
+    </div>
+
+    <div class="fb-privacy">
+      <strong>How this works:</strong> Clicking Send composes a feedback email in your default email client. Your response is never sent to a third-party server — it goes directly and only to the tool&#8217;s author. Your name is optional and will be used only to address a reply if you wish.
+    </div>
+
+    <!-- Bot trap: hidden field, real users leave it blank -->
+    <div style="position:absolute;left:-9999px;top:-9999px;height:0;overflow:hidden" aria-hidden="true">
+      <label for="website-url">Website</label>
+      <input type="text" id="website-url" name="website-url" tabindex="-1" autocomplete="off">
+    </div>
+
+    <button class="fb-send-btn" id="fb-submit-btn" onclick="submitFeedback()">
+      <span id="fb-btn-text">Send feedback</span>
+      <span id="fb-spinner" style="display:none" class="spinner"></span>
+    </button>
+
+    <div class="fb-success" id="fb-success">
+      <strong>Your email client should have opened</strong> with a pre-filled message. If it didn&#8217;t open automatically, please copy your feedback and send it manually. Thank you — your input directly shapes the next version of this tool.
+    </div>
+    <div class="fb-error" id="fb-error">
+      Something prevented the email client from opening. Please copy your feedback and email it manually.
+    </div>
+
+  </div>
+</div>
+
 </main>
 
 <footer>
@@ -1132,6 +1261,109 @@ function nextS() {
 
 renderScenario();
 renderCustomList();
+
+// ── FEEDBACK ──
+let starVal = 0;
+const starLabels = ['','Not useful','Slightly useful','Moderately useful','Very useful','Excellent'];
+
+function setStar(v) {
+  starVal = v;
+  document.querySelectorAll('.star').forEach(s => {
+    s.classList.toggle('lit', parseInt(s.dataset.v) <= v);
+  });
+  document.getElementById('star-label').textContent = starLabels[v] || '';
+}
+
+function charCount(inputId, countId, max) {
+  const len = document.getElementById(inputId).value.length;
+  document.getElementById(countId).textContent = len + ' / ' + max;
+}
+
+function submitFeedback() {
+  // Bot trap check
+  if (document.getElementById('website-url').value) return;
+
+  const rating = starVal ? starLabels[starVal] + ' (' + starVal + '/5)' : 'Not rated';
+  const role = document.getElementById('fb-role').value || 'Not answered';
+  const moment = document.getElementById('fb-moment').value.trim() || 'Not provided';
+  const changes = document.getElementById('fb-changes').value.trim() || 'Not provided';
+  const context = document.getElementById('fb-context').value || 'Not shared';
+  const name = document.getElementById('fb-name').value.trim() || 'Anonymous';
+
+  const roleMap = {
+    very: 'Very useful — it clarified something I hadn\'t named before',
+    somewhat: 'Somewhat useful — it confirmed things I already sensed',
+    neutral: 'Neutral — interesting but not immediately actionable',
+    limited: 'Limited — the scenarios didn\'t match my context well',
+    not: 'Not useful — the framework doesn\'t fit how I teach'
+  };
+  const contextMap = {
+    primary: 'Primary / elementary school',
+    secondary: 'Secondary / high school',
+    undergrad: 'Undergraduate / college',
+    postgrad: 'Postgraduate / graduate',
+    professional: 'Professional / continuing education',
+    other: 'Other'
+  };
+
+  const body = [
+    'DIAL BOARD TOOL — TEACHER FEEDBACK',
+    '====================================',
+    '',
+    'From: ' + name,
+    'Teaching context: ' + (contextMap[context] || 'Not shared'),
+    '',
+    '1. OVERALL RATING',
+    rating,
+    '',
+    '2. HOW USEFUL IN INFORMING OPTIMAL ROLE',
+    roleMap[role] || role,
+    '',
+    '3. MOST USEFUL / REVEALING MOMENT',
+    moment,
+    '',
+    '4. SUGGESTED CHANGES FOR CLASSROOM RELEVANCE',
+    changes,
+    '',
+    '====================================',
+    'Sent from: The Dial Board — Referee & Coach (Teacher Tool)'
+  ].join('\n');
+
+  const subject = 'Dial Board Feedback — ' + name;
+
+  // Assemble email address from parts to avoid bot harvesting
+  const u = ['anil', 'k', 'challa'].join('');
+  const d = ['gmail', 'com'].join('.');
+  const addr = u + '@' + d;
+
+  const btn = document.getElementById('fb-submit-btn');
+  const spinner = document.getElementById('fb-spinner');
+  btn.disabled = true;
+  spinner.style.display = 'inline-block';
+  document.getElementById('fb-btn-text').textContent = 'Opening email...';
+
+  const mailto = 'mailto:' + addr
+    + '?subject=' + encodeURIComponent(subject)
+    + '&body=' + encodeURIComponent(body);
+
+  setTimeout(() => {
+    try {
+      window.location.href = mailto;
+      setTimeout(() => {
+        btn.disabled = false;
+        spinner.style.display = 'none';
+        document.getElementById('fb-btn-text').textContent = 'Send feedback';
+        document.getElementById('fb-success').style.display = 'block';
+        document.getElementById('fb-error').style.display = 'none';
+      }, 1200);
+    } catch(e) {
+      btn.disabled = false;
+      spinner.style.display = 'none';
+      document.getElementById('fb-btn-text').textContent = 'Send feedback';
+      document.getElementById('fb-error').style.display = 'block';
+    }
+  }, 400);
+}
 </script>
 </body>
 </html>
