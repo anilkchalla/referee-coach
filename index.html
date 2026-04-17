@@ -1279,90 +1279,49 @@ function charCount(inputId, countId, max) {
   document.getElementById(countId).textContent = len + ' / ' + max;
 }
 
-function submitFeedback() {
-  // Bot trap check
+async function submitFeedback() {
   if (document.getElementById('website-url').value) return;
 
   const rating = starVal ? starLabels[starVal] + ' (' + starVal + '/5)' : 'Not rated';
-  const role = document.getElementById('fb-role').value || 'Not answered';
+  const role   = document.getElementById('fb-role').value || 'Not answered';
   const moment = document.getElementById('fb-moment').value.trim() || 'Not provided';
-  const changes = document.getElementById('fb-changes').value.trim() || 'Not provided';
-  const context = document.getElementById('fb-context').value || 'Not shared';
-  const name = document.getElementById('fb-name').value.trim() || 'Anonymous';
+  const changes= document.getElementById('fb-changes').value.trim() || 'Not provided';
+  const context= document.getElementById('fb-context').value || 'Not shared';
+  const name   = document.getElementById('fb-name').value.trim() || 'Anonymous';
 
-  const roleMap = {
-    very: 'Very useful — it clarified something I hadn\'t named before',
-    somewhat: 'Somewhat useful — it confirmed things I already sensed',
-    neutral: 'Neutral — interesting but not immediately actionable',
-    limited: 'Limited — the scenarios didn\'t match my context well',
-    not: 'Not useful — the framework doesn\'t fit how I teach'
-  };
-  const contextMap = {
-    primary: 'Primary / elementary school',
-    secondary: 'Secondary / high school',
-    undergrad: 'Undergraduate / college',
-    postgrad: 'Postgraduate / graduate',
-    professional: 'Professional / continuing education',
-    other: 'Other'
-  };
-
-  const body = [
-    'DIAL BOARD TOOL — TEACHER FEEDBACK',
-    '====================================',
-    '',
-    'From: ' + name,
-    'Teaching context: ' + (contextMap[context] || 'Not shared'),
-    '',
-    '1. OVERALL RATING',
-    rating,
-    '',
-    '2. HOW USEFUL IN INFORMING OPTIMAL ROLE',
-    roleMap[role] || role,
-    '',
-    '3. MOST USEFUL / REVEALING MOMENT',
-    moment,
-    '',
-    '4. SUGGESTED CHANGES FOR CLASSROOM RELEVANCE',
-    changes,
-    '',
-    '====================================',
-    'Sent from: The Dial Board — Referee & Coach (Teacher Tool)'
-  ].join('\n');
-
-  const subject = 'Dial Board Feedback — ' + name;
-
-  // Assemble email address from parts to avoid bot harvesting
-  const u = ['anil', 'k', 'challa'].join('');
-  const d = ['gmail', 'com'].join('.');
-  const addr = u + '@' + d;
-
-  const btn = document.getElementById('fb-submit-btn');
+  const btn     = document.getElementById('fb-submit-btn');
   const spinner = document.getElementById('fb-spinner');
-  btn.disabled = true;
+  btn.disabled  = true;
   spinner.style.display = 'inline-block';
-  document.getElementById('fb-btn-text').textContent = 'Opening email...';
+  document.getElementById('fb-btn-text').textContent = 'Sending...';
 
-  const mailto = 'mailto:' + addr
-    + '?subject=' + encodeURIComponent(subject)
-    + '&body=' + encodeURIComponent(body);
+  const payload = {
+    name, context, rating, role,
+    moment, changes,
+    _subject: 'Dial Board Feedback — ' + name,
+    _replyto: '',
+  };
 
-  setTimeout(() => {
-    try {
-      window.location.href = mailto;
-      setTimeout(() => {
-        btn.disabled = false;
-        spinner.style.display = 'none';
-        document.getElementById('fb-btn-text').textContent = 'Send feedback';
-        document.getElementById('fb-success').style.display = 'block';
-        document.getElementById('fb-error').style.display = 'none';
-      }, 1200);
-    } catch(e) {
-      btn.disabled = false;
-      spinner.style.display = 'none';
-      document.getElementById('fb-btn-text').textContent = 'Send feedback';
-      document.getElementById('fb-error').style.display = 'block';
+  try {
+    const res = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      document.getElementById('fb-success').style.display = 'block';
+      document.getElementById('fb-error').style.display   = 'none';
+    } else {
+      throw new Error('non-ok');
     }
-  }, 400);
+  } catch(e) {
+    document.getElementById('fb-error').style.display   = 'block';
+    document.getElementById('fb-success').style.display = 'none';
+  } finally {
+    btn.disabled = false;
+    spinner.style.display = 'none';
+    document.getElementById('fb-btn-text').textContent = 'Send feedback';
+  }
 }
 </script>
 </body>
