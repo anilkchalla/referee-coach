@@ -739,8 +739,8 @@
 
     <div class="form-group">
       <label class="form-label">Signal options (optional — up to 3, one per line)</label>
-      <textarea class="form-textarea" id="f-signals" placeholder='Line 1: "What will it take to get an A?" [referee]&#10;Line 2: "Can you help me figure out my approach?" [coach]&#10;Line 3: Avoids eye contact, seems defeated [read first]' style="min-height:90px"></textarea>
-      <div style="font-size:11px;color:var(--ink-3);margin-top:.3rem">Append [referee], [coach], or [read first] to tag each signal</div>
+      <textarea class="form-textarea" id="f-signals" placeholder='Line 1: "What will it take to get an A?" [referee]&#10;Line 2: "Can you help me figure out my approach?" [coach]&#10;Line 3: Avoids eye contact, seems defeated [Diagnose first]' style="min-height:90px"></textarea>
+      <div style="font-size:11px;color:var(--ink-3);margin-top:.3rem">Append [referee], [coach], or [Diagnose first] to tag each signal</div>
     </div>
 
     <button class="btn-primary" onclick="addCustomScenario()">Add to scenario deck</button>
@@ -1033,7 +1033,7 @@ function renderSignals() {
   const tagMap = {
     r: {cls: 'sel-r', label: 'Referee signal', tc: 'tag-r'},
     c: {cls: 'sel-c', label: 'Coach signal', tc: 'tag-c'},
-    u: {cls: 'sel-u', label: 'Read first', tc: 'tag-u'}
+    u: {cls: 'sel-u', label: 'Diagnose first', tc: 'tag-u'}
   };
   if (!s.signals || s.signals.length === 0) {
     document.getElementById('sigrid').innerHTML = '<div style="font-size:13px;color:var(--ink-3);font-style:italic;margin-bottom:.5rem">No signals defined for this scenario.</div>';
@@ -1192,7 +1192,7 @@ function renderBreakdown() {
 function parseSignalTag(line) {
   if (line.toLowerCase().includes('[referee]')) return {q: line.replace(/\[referee\]/i,'').trim(), tag:'r'};
   if (line.toLowerCase().includes('[coach]')) return {q: line.replace(/\[coach\]/i,'').trim(), tag:'c'};
-  return {q: line.replace(/\[read first\]/i,'').trim(), tag:'u'};
+  return {q: line.replace(/\[diagnose first\]/i,'').trim(), tag:'u'};
 }
 
 function addCustomScenario() {
