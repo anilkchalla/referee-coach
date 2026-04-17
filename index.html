@@ -862,7 +862,8 @@
     </div>
 
     <div class="fb-privacy">
-      <strong>How this works:</strong> Clicking Send composes a feedback email in your default email client. Your response is never sent to a third-party server — it goes directly and only to the tool&#8217;s author. Your name is optional and will be used only to address a reply if you wish.
+      <strong>How this works:</strong> Clicking Send composes a feedback email in your default email client. Your response is sent securely via Formspree directly to the tool's author. 
+No data is stored beyond what you submit here. Your name is optional and will be used only to address a reply if you wish.
     </div>
 
     <!-- Bot trap: hidden field, real users leave it blank -->
@@ -1303,7 +1304,7 @@ async function submitFeedback() {
   };
 
   try {
-    const res = await fetch('https://formspree.io/f/YOUR_FORM_ID', {
+    const res = await fetch('https://formspree.io/f/mwvalzav', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify(payload)
